@@ -36,16 +36,14 @@ public class Program {
 			System.out.print("Check-out date(dd/MM/yyyy): ");
 			checkOut = sf.parse(sc.next()); // não está declarando novas variaveis, está reaproveitando as de cima
 
-			Date now = new Date(); // criando data com horário de agora
-			if (checkIn.before(now) || checkOut.before(now)) {
-				System.out.println("Error in reservation: Reservation dates for update must be future dates!");
-			} else if (!checkOut.after(checkIn)) { // se a data de checkout não for posterior a data de checkin
-				System.out.println("Error in reservation: Check-out date must be after check-in date!");
+			String error = reservation.updateDates(checkIn, checkOut);// método responsavel por atualizar as datas
 
+			if (error != null) {
+				System.out.println("Error in reservation: " + error);
 			} else {
-				reservation.updateDates(checkIn, checkOut);// método responsavel por atualizar as datas
 				System.out.println("Reservation: " + reservation);
 			}
+
 		}
 
 		sc.close();
