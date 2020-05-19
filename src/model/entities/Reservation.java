@@ -4,19 +4,23 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import model.exceptions.DomainException;
+
 public class Reservation {
 
 	private Integer roomNumber;
 	private Date checkIn;
 	private Date checkOut;
 
-	private static SimpleDateFormat sf = new SimpleDateFormat(
-			"dd/MM/yyyy"); /*
+	private static SimpleDateFormat sf = new SimpleDateFormat("dd/MM/yyyy"); /*
 							 * o static permite que o SimpleDateFormat seja instanciado uma única vez,
 							 * independente do número de obejtos reservation eu tiver
 							 */
 
-	public Reservation(Integer roomNumber, Date checkIn, Date checkOut) {
+	public Reservation(Integer roomNumber, Date checkIn, Date checkOut){
+		if (!checkOut.after(checkIn)) { // se a data de checkout não for posterior a data de checkin
+			throw new DomainException("Check-out date must be after check-in date!");
+		}
 		this.roomNumber = roomNumber;
 		this.checkIn = checkIn;
 		this.checkOut = checkOut;
@@ -44,18 +48,17 @@ public class Reservation {
 																	// para dias
 	}
 
-	public String updateDates(Date checkIn, Date checkOut) {
+	public void updateDates(Date checkIn, Date checkOut) { //propagando exceção na assinatura do método
 
 		Date now = new Date(); // criando data com horário de agora
 		if (checkIn.before(now) || checkOut.before(now)) {
-			return "Reservation dates for update must be future dates!";
+			throw new DomainException("Reservation dates for update must be future dates!");
 		}
 		if (!checkOut.after(checkIn)) { // se a data de checkout não for posterior a data de checkin
-			return "Check-out date must be after check-in date!";
+			throw new DomainException("Check-out date must be after check-in date!");
 		}
 		this.checkIn = checkIn; // CheckIn do meu objeto receber o checkIn que veio como argumento do método
 		this.checkOut = checkOut; // CheckOut do meu objeto receber o checkOut que veio como argumento do método
-		return null; //se retornar nulo é pq a operação não deu nenhum erro
 	}
 
 	@Override // o to String é uma sobreposição

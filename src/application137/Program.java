@@ -6,26 +6,25 @@ import java.util.Date;
 import java.util.Scanner;
 
 import model.entities.Reservation;
+import model.exceptions.DomainException;
 
 public class Program {
 
-	public static void main(String[] args) throws ParseException { // propagando a exceção
-		// Aula 137 - Tratando exceções (versionamento - solução RUIM)
+	public static void main(String[] args) {
+		// Aula 137 - Tratando exceções (versionamento - solução BOA)
 
 		Scanner sc = new Scanner(System.in);
 		SimpleDateFormat sf = new SimpleDateFormat("dd/MM/yyyy");
 
-		System.out.print("Room Number: ");
-		int number = sc.nextInt();
-		System.out.print("Check-in date(dd/MM/yyyy): ");
-		Date checkIn = sf.parse(sc.next()); // Entrando data no formato de texto pelo sc.next, e o sf vai converter para
-											// um date pra mim
-		System.out.print("Check-out date(dd/MM/yyyy): ");
-		Date checkOut = sf.parse(sc.next());
+		try {
+			System.out.print("Room Number: ");
+			int number = sc.nextInt();
+			System.out.print("Check-in date(dd/MM/yyyy): ");
+			Date checkIn = sf.parse(sc.next()); // Entrando data no formato de texto pelo sc.next, e o sf vai converter
+												// para um date pra mim
+			System.out.print("Check-out date(dd/MM/yyyy): ");
+			Date checkOut = sf.parse(sc.next());
 
-		if (!checkOut.after(checkIn)) { // se checkout não é depois do checkin, faça:
-			System.out.println("Error in reservation: Check-out date must be after check-in date!");
-		} else {
 			Reservation reservation = new Reservation(number, checkIn, checkOut);
 			System.out.println("Reservation: " + reservation);
 
@@ -36,16 +35,15 @@ public class Program {
 			System.out.print("Check-out date(dd/MM/yyyy): ");
 			checkOut = sf.parse(sc.next()); // não está declarando novas variaveis, está reaproveitando as de cima
 
-			String error = reservation.updateDates(checkIn, checkOut);// método responsavel por atualizar as datas
-
-			if (error != null) {
-				System.out.println("Error in reservation: " + error);
-			} else {
-				System.out.println("Reservation: " + reservation);
-			}
-
+			reservation.updateDates(checkIn, checkOut);// método responsavel por atualizar as datas
+			System.out.println("Reservation: " + reservation);
+		} catch (ParseException e) {
+			System.out.println("Invalid date Format");
+		} catch (DomainException e) { // e é o apelido da execção
+			System.out.println("Error in reservation: " + e.getMessage());
+		} catch (RuntimeException e) {
+			System.out.println("Unexpected error");
 		}
-
 		sc.close();
 	}
 
